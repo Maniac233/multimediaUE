@@ -29,4 +29,9 @@ public class MenuActivity extends Activity {
         introIntent.putExtra("fromMenu", true);
         startActivity(introIntent);
     }
+
+    public void launchGame(View v) {
+        Intent intent = new Intent(this,GameActivity.class);
+        startActivity(intent);
+    }
 }
