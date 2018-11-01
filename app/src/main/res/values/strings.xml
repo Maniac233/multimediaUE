@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Nocturnal Apparition Pursuit</string>
+    <string name="skipIntro">Skip</string>
+    <string name="startGame">Spiel starten</string>
+    <string name="viewHighscore">Highscore ansehen</string>
+    <string name="watchIntro">Intro abspielen</string>
+    <string name="controls">Steuerung ansehen</string>
+    <string name="quit">Spiel beenden</string>
+</resources>
