@@ -30,6 +30,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private IngameObjects ingameObjects; // foreground objects
     private Paint paint; // draw utility
 
+    private float tapX; // last touch down event x-coordinate
+    private float tapY; // last touch down event y-coordinate
+    private long tapTime; // time value of the last tap that we know of
+    private final float TAP_DISTANCE = 10.f; // distance threshold between down and up that we consider a tap
+    private final long TAP_TIME = 500; // time threshold between down and up that we consider a tap
+    private final long DOUBLETAP_TIME = 500; // time threshold between two taps in a double-tap
+
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
@@ -61,16 +68,61 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
      * Handler for touch input.
      *
      * The game accepts two kinds of input: continuous touches for movement and taps for net-casting.
+     * This method translates Android touch events into game inputs and passes them to the {@link GameLoop}.
      *
      * @param e The motion event.
      * @return True if the event was handled, false otherwise.
      */
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        if(e.getAction() == MotionEvent.ACTION_DOWN) {
-            loop.inputTouch(e.getX(), e.getY());
+        float x = 0.f;
+        float y = 0.f;
+        long time = 0;
+
+        switch(e.getActionMasked()) {
+            case MotionEvent.ACTION_MOVE:
+                x = e.getX();
+                y = e.getY();
+                loop.inputMove(x, y);
+                return true;
+
+            case MotionEvent.ACTION_DOWN:
+                tapX = e.getX();
+                tapY = e.getY();
+                loop.inputMove(tapX, tapY);
+                return true;
+
+            case MotionEvent.ACTION_UP:
+                loop.inputHalt();
+
+                time = e.getEventTime();
+                x = e.getX();
+                y = e.getY();
+                float distanceSquared = (x - tapX) * (x - tapX) + (y - tapY) * (y - tapY);
+                if(time - e.getDownTime() <= TAP_TIME && distanceSquared <= TAP_DISTANCE * TAP_DISTANCE) {
+                    if(time - tapTime <= DOUBLETAP_TIME) {
+                        loop.inputJump(x, y);
+                        tapTime = 0;
+                    }
+                    else {
+                        tapTime = time;
+                        tapX = x;
+                        tapY = y;
+                    }
+                }
+                return true;
+
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if(1 == e.getActionIndex()) { // second touch
+                    x = e.getX(1);
+                    y = e.getY(1);
+                    loop.inputJump(x, y);
+                }
+                return true;
+
         }
-        return true;
+
+        return false;
     }
 
     /**

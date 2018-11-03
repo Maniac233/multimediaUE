@@ -2,6 +2,7 @@ package at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit;
 
 import android.graphics.Canvas;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -18,6 +19,8 @@ import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Net;
  * it is stopped with <code>setRunning(false)</code>.
  */
 public class GameLoop implements Runnable {
+
+    private final static String TAG = MenuActivity.class.getSimpleName(); // for logging
 
     public final int TICKS_PER_SECOND = 50;
 
@@ -117,20 +120,54 @@ public class GameLoop implements Runnable {
     }
 
     /**
-     * Enqueue one touch input in the loop's input queue.
+     * Enqueue the player move input in the loop's input queue.
+     *
+     * The player character will move in the direction of the given coordinates until it reaches
+     * them or until <code>inputHalt()</code> is called.
      *
      * Inputs from the queue will be woven into the game at the next update from the loop's
      * core to enable thread safety.
      *
-     * @param x x-coordinate of the input
-     * @param y y-coordinate of the input
+     * @param x move target x-coordinate
+     * @param y move target y-coordinate
      */
-    public void inputTouch(float x, float y) {
-        try {
-            inputs.put(new QueuedInput(x, y));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void inputMove(float x, float y) {
+//        try {
+//            inputs.put(new QueuedInput(x, y));
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        Log.d(TAG, String.format("Got move input at %.2f, %.2f", x, y));
+    }
+
+    /**
+     * Enqueue the player halt input in the loop's input queue.
+     *
+     * The player character will stop moving around until <code>inputMove()</code> is called again.
+     *
+     * Inputs from the queue will be woven into the game at the next update from the loop's
+     * core to enable thread safety.
+     */
+    public void inputHalt() {
+        Log.d(TAG, "Got halt input");
+    }
+
+    /**
+     * Enqueue the player jump input in the loop's input queue.
+     *
+     * The player character will jump to the given coordinates if the game rules allow it.
+     * A net will spawn at the previous location and capture the bullets in the vicinity.
+     * Note that this is only the player's request to jump. If it is prohibited e.g. by
+     * a cooldown, the jump will not happen.
+     *
+     * Inputs from the queue will be woven into the game at the next update from the loop's
+     * core to enable thread safety.
+     *
+     * @param x jump target x-coordinate
+     * @param y jump target y-coordinate
+     */
+    public void inputJump(float x, float y) {
+        Log.d(TAG, String.format("Got jump input at %.2f, %.2f", x, y));
     }
 
     /**
