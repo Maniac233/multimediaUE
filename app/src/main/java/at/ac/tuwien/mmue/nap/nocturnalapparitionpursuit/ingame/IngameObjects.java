@@ -26,7 +26,7 @@ public class IngameObjects {
 
     public IngameObjects(Resources resources) {
         hud = new Hud(700, 70, BitmapFactory.decodeResource(resources, R.drawable.hud));
-        player = new Player(500, 700, BitmapFactory.decodeResource(resources, R.drawable.player));
+        player = new Player(500.f, 700.f, 3.f, BitmapFactory.decodeResource(resources, R.drawable.player));
         net = null;
         Bitmap bulletSprite = BitmapFactory.decodeResource(resources, R.drawable.bullet);
         bullets = new ArrayList<Bullet>();

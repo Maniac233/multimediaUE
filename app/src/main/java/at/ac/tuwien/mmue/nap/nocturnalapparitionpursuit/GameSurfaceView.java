@@ -102,6 +102,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 if(time - e.getDownTime() <= TAP_TIME && distanceSquared <= TAP_DISTANCE * TAP_DISTANCE) {
                     if(time - tapTime <= DOUBLETAP_TIME) {
                         loop.inputJump(x, y);
+                        loop.inputHalt();
                         tapTime = 0;
                     }
                     else {

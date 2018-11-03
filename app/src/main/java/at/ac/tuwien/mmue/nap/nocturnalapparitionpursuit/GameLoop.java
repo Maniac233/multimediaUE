@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Bullet;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.IngameObjects;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Net;
+import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Player;
 
 /**
  * This is our implementation of the game logic.
@@ -30,6 +31,11 @@ public class GameLoop implements Runnable {
     private boolean running; // we quit when this flag gets set to false
 
     /**
+     * Enumeration of the kinds of input that we can receive from the player.
+     */
+    public enum InputType { MOVE, HALT, JUMP };
+
+    /**
      * This represents one user input coming from the GUI thread.
      *
      * We keep these inputs in a thread-safe queue to be picked up and handled by the loop thread.
@@ -37,10 +43,12 @@ public class GameLoop implements Runnable {
      * which would require additional synchronization efforts.
      */
     private class QueuedInput {
+        InputType type;
         public float x; // x-coordinate of screen touch
         public float y; // y-coordinate of screen touch
 
-        public QueuedInput(float x, float y) {
+        public QueuedInput(InputType type, float x, float y) {
+            this.type = type;
             this.x = x;
             this.y = y;
         }
@@ -132,12 +140,11 @@ public class GameLoop implements Runnable {
      * @param y move target y-coordinate
      */
     public void inputMove(float x, float y) {
-//        try {
-//            inputs.put(new QueuedInput(x, y));
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        Log.d(TAG, String.format("Got move input at %.2f, %.2f", x, y));
+        try {
+            inputs.put(new QueuedInput(InputType.MOVE, x, y));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -149,7 +156,11 @@ public class GameLoop implements Runnable {
      * core to enable thread safety.
      */
     public void inputHalt() {
-        Log.d(TAG, "Got halt input");
+        try {
+            inputs.put(new QueuedInput(InputType.HALT, 0, 0));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -167,7 +178,11 @@ public class GameLoop implements Runnable {
      * @param y jump target y-coordinate
      */
     public void inputJump(float x, float y) {
-        Log.d(TAG, String.format("Got jump input at %.2f, %.2f", x, y));
+        try {
+            inputs.put(new QueuedInput(InputType.JUMP, x, y));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -175,9 +190,23 @@ public class GameLoop implements Runnable {
      */
     private void handleInputs() {
         QueuedInput input = null;
+        Player player = ingameObjects.getPlayer();
 
         while((input = inputs.poll()) != null) {
-            ingameObjects.spawnStuff(input.x, input.y);
+            switch(input.type) {
+                case MOVE:
+                    player.moveTowards(input.x, input.y);
+                    break;
+
+                case HALT:
+                    player.haltMovement();
+                    break;
+
+                case JUMP:
+                    player.jumpTo(input.x, input.y);
+                    break;
+            }
+//            ingameObjects.spawnStuff(input.x, input.y);
         }
     }
 
@@ -190,6 +219,8 @@ public class GameLoop implements Runnable {
         if(net != null) {
             net.setLifetime(ingameObjects.getNet().getLifetime() - 1);
         }
+
+        ingameObjects.getPlayer().update();
 
         for(Bullet bullet : ingameObjects.getBullets()) {
             bullet.update();
