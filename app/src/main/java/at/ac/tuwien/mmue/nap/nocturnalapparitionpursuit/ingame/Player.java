@@ -4,12 +4,18 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+/**
+ * Represents the player character on the screen.
+ */
 public class Player {
     private int positionX; //! X coordinate ranging from [0..1000]
     private int positionY; //! Y coordinate ranging from [0..1778]
     private Bitmap sprite; //! source pixel data
     private int state; //! current state of player
 
+    /**
+     * Place the player at the given position with the given image.
+     */
     public Player(int positionX, int positionY, Bitmap sprite) {
         this.positionX = positionX;
         this.positionY = positionY;
@@ -40,6 +46,12 @@ public class Player {
         this.state = state;
     }
 
+    /**
+     * Draw the player on the canvas.
+     *
+     * @param canvas draw target
+     * @param paint draw utility
+     */
     public void draw(Canvas canvas, Paint paint) {
         float drawLeft = positionX * canvas.getWidth() / 1000.f - sprite.getWidth() / 2.f;
         float drawTop = positionY * canvas.getHeight() / 1778.f - sprite.getHeight() / 2.f;

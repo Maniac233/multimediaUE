@@ -9,6 +9,11 @@ import java.util.List;
 
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.R;
 
+/**
+ * Container for all objects to be displayed on the screen while we are running the game loop.
+ *
+ * We currently implement only one net at a time. To be changed based on gameplay tests.
+ */
 public class IngameObjects {
     private Hud hud;
     private Player player;
@@ -47,6 +52,12 @@ public class IngameObjects {
         return bullets;
     }
 
+    /**
+     * Temporary method to put interesting stuff on the screen.
+     *
+     * @param x x-coordinate
+     * @param y y-coordinate
+     */
     public void spawnStuff(float x, float y)
     {
         net = new Net((int)x, (int)y, 200.f, netSprite, 5000);

@@ -5,19 +5,36 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+/**
+ * Represents one of the catchable targets on the screen (fireflies, bugs, other things...?)
+ *
+ * Their concerted behavior defines the level's gameplay challenge.
+ * Currently, behavior is only defined in very basic terms and can be expanded in the future.
+ */
 public class Bullet {
-    private float positionX; //! X coordinate ranging from [0..1000]
-    private float positionY; //! Y coordinate ranging from [0..1778]
-    private Bitmap sprite; //! source pixel data
-    private Rect spriteRect; //! draw source area
-    private int state; //! current state of player
+    private float positionX; // X coordinate ranging from [0..1000]
+    private float positionY; // Y coordinate ranging from [0..1778]
+    private Bitmap sprite; // source pixel data
+    private Rect spriteRect; // draw source area
+    private int state; // current state of the bullet
 
     // ---- behavior ----
-    private float heading; //! movement direction [0..2pi]
-    private float speed; //! movement speed
-    private float turn; //! delta-heading to be applied to direction every update
-    private float acceleration; //! delta-speed
+    private float heading; // movement direction [0..2pi]
+    private float speed; // movement speed
+    private float turn; // delta-heading to be applied to direction every update
+    private float acceleration; // delta-speed
 
+    /**
+     * Construct the Bullet with basic behavior.
+     *
+     * @param positionX spawn position x-coordinate
+     * @param positionY spawn position y-coordinate
+     * @param sprite bullet image (heading should be *right*)
+     * @param heading initial movement direction
+     * @param speed initial move rate per game update
+     * @param turn per-update absolute change to heading
+     * @param acceleration per-update absolute change to speed
+     */
     public Bullet(float positionX, float positionY, Bitmap sprite,
                   float heading, float speed, float turn, float acceleration) {
         this.positionX = positionX;
@@ -71,7 +88,9 @@ public class Bullet {
         this.acceleration = acceleration;
     }
 
-    /// Execute a movement step
+    /**
+     * Execute a movement step according to the bullet's behavior.
+     */
     public void update() {
         this.positionX += Math.cos(this.heading) * this.speed;
         this.positionY += Math.sin(this.heading) * this.speed;
@@ -79,6 +98,12 @@ public class Bullet {
         this.speed += this.acceleration;
     }
 
+    /**
+     * Draw the bullet on the canvas.
+     *
+     * @param canvas draw target
+     * @param paint draw utility
+     */
     public void draw(Canvas canvas, Paint paint) {
         float bulletSize = 50;
         float drawLeft = (positionX * canvas.getWidth() - bulletSize / 2.f) / 1000.f;
