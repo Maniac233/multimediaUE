@@ -106,8 +106,8 @@ public class Bullet {
      */
     public void draw(Canvas canvas, Paint paint) {
         float bulletSize = 50;
-        float drawLeft = (positionX * canvas.getWidth() - bulletSize / 2.f) / 1000.f;
-        float drawTop = (positionY * canvas.getHeight() - bulletSize / 2.f) / 1778.f;
+        float drawLeft = (positionX * canvas.getWidth() - bulletSize / 2.f) / Constants.BOARD_WIDTH;
+        float drawTop = (positionY * canvas.getHeight() - bulletSize / 2.f) / Constants.BOARD_HEIGHT;
         Rect destRect = new Rect((int)drawLeft, (int)drawTop,
                 (int)(drawLeft + bulletSize), (int)(drawTop + bulletSize));
         canvas.drawBitmap(sprite, spriteRect, destRect, paint);

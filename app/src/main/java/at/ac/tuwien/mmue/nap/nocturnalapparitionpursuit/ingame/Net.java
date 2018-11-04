@@ -11,8 +11,8 @@ import android.graphics.Paint;
  * circle primitives, effects etc.
  */
 public class Net {
-    private int positionX; // X coordinate ranging from [0..1000]
-    private int positionY; // Y coordinate ranging from [0..1778]
+    private int positionX; // X coordinate
+    private int positionY; // Y coordinate
     private float size; // Scale of covered area
     private Bitmap sprite; // source pixel data
     private int lifetime; // Leftover time to live
@@ -61,8 +61,8 @@ public class Net {
      * @param paint draw utility
      */
     public void draw(Canvas canvas, Paint paint) {
-        float drawLeft = positionX * canvas.getWidth() / 1000.f - sprite.getWidth() / 2.f;
-        float drawTop = positionY * canvas.getHeight() / 1778.f - sprite.getHeight() / 2.f;
+        float drawLeft = positionX * canvas.getWidth() / Constants.BOARD_WIDTH - sprite.getWidth() / 2.f;
+        float drawTop = positionY * canvas.getHeight() / Constants.BOARD_HEIGHT - sprite.getHeight() / 2.f;
         canvas.drawBitmap(sprite, drawLeft, drawTop, paint);
     }
 }

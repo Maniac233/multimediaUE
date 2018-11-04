@@ -25,8 +25,8 @@ public class IngameObjects {
     private Bitmap bulletSprite;
 
     public IngameObjects(Resources resources) {
-        hud = new Hud(700, 70, BitmapFactory.decodeResource(resources, R.drawable.hud));
-        player = new Player(500.f, 700.f, 3.f, BitmapFactory.decodeResource(resources, R.drawable.player));
+        hud = new Hud(Constants.BOARD_WIDTH * 7 / 10, 70, BitmapFactory.decodeResource(resources, R.drawable.hud));
+        player = new Player(Constants.BOARD_WIDTH / 2.f, Constants.BOARD_HEIGHT * .6f, 3.f, BitmapFactory.decodeResource(resources, R.drawable.player));
         net = null;
         Bitmap bulletSprite = BitmapFactory.decodeResource(resources, R.drawable.bullet);
         bullets = new ArrayList<Bullet>();

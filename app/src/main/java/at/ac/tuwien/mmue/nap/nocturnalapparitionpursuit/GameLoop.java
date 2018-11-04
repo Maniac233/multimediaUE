@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Bullet;
+import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Constants;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.IngameObjects;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Net;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Player;
@@ -22,8 +23,6 @@ import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Player;
 public class GameLoop implements Runnable {
 
     private final static String TAG = MenuActivity.class.getSimpleName(); // for logging
-
-    public final int TICKS_PER_SECOND = 50;
 
     private SurfaceHolder holder; // used for canvas synchronization
     private GameSurfaceView view; // the view can draw the game
@@ -107,7 +106,7 @@ public class GameLoop implements Runnable {
         this.levelTime = 0;
 
         // Better game loop inspired by http://www.koonsolo.com/news/dewitters-gameloop/
-        final int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+        final int SKIP_TICKS = 1000 / Constants.TICKS_PER_SECOND;
         final int MAX_FRAMESKIP = 5;
 
         // use monotonic clock
@@ -273,7 +272,8 @@ public class GameLoop implements Runnable {
             for(int i = 0; i < directions; i++) {
                 float heading = (float)(2. * Math.PI / directions * i * clockwise);
                 float turn = .01f * clockwise;
-                ingameObjects.spawnBullet(500.f, 900.f, heading, .6f, turn, .01f);
+                ingameObjects.spawnBullet(Constants.BOARD_WIDTH / 2.f, Constants.BOARD_HEIGHT / 2.f,
+                        heading, .6f, turn, .01f);
             }
         }
 
