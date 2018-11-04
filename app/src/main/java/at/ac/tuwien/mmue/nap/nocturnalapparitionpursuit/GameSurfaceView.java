@@ -12,6 +12,7 @@ import android.view.SurfaceHolder;
 
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Background;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Bullet;
+import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Constants;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.IngameObjects;
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Net;
 
@@ -83,13 +84,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             case MotionEvent.ACTION_MOVE:
                 x = e.getX();
                 y = e.getY();
-                loop.inputMove(x, y);
+                loop.inputMove(screenToBoardX(x), screenToBoardY(y));
                 return true;
 
             case MotionEvent.ACTION_DOWN:
                 tapX = e.getX();
                 tapY = e.getY();
-                loop.inputMove(tapX, tapY);
+                loop.inputMove(screenToBoardX(tapX), screenToBoardY(tapY));
                 return true;
 
             case MotionEvent.ACTION_UP:
@@ -101,7 +102,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 float distanceSquared = (x - tapX) * (x - tapX) + (y - tapY) * (y - tapY);
                 if(time - e.getDownTime() <= TAP_TIME && distanceSquared <= TAP_DISTANCE * TAP_DISTANCE) {
                     if(time - tapTime <= DOUBLETAP_TIME) {
-                        loop.inputJump(x, y);
+                        loop.inputJump(screenToBoardX(x), screenToBoardY(y));
                         loop.inputHalt();
                         tapTime = 0;
                     }
@@ -117,7 +118,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 if(1 == e.getActionIndex()) { // second touch
                     x = e.getX(1);
                     y = e.getY(1);
-                    loop.inputJump(x, y);
+                    loop.inputJump(screenToBoardX(x), screenToBoardY(y));
                 }
                 return true;
 
@@ -134,7 +135,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
      * @param canvas draw target
      * @param interpolation fraction [0 ~ 1.] of an update that has elapsed since the last <code>update()</code>
      */
-    public void drawAll(Canvas canvas, float interpolation) {
+    public void drawAll(final Canvas canvas, float interpolation) {
         // Draw the bitmaps:
         background.draw(canvas, paint);
         ingameObjects.getHud().draw(canvas, paint);
@@ -147,5 +148,84 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         for (Bullet bullet : ingameObjects.getBullets()) {
             bullet.draw(canvas, paint);
         }
+
+        // DEBUG: for orientation we draw some lines at a constant distance from the screen border
+        final float MARGIN_RED = 50.f;
+        final float MARGIN_YELLOW = 25.f;
+
+        // top lines
+        paint.setColor(Color.RED);
+        canvas.drawLine(MARGIN_RED * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_RED * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                (Constants.BOARD_WIDTH - MARGIN_RED) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_RED * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+        paint.setColor(Color.YELLOW);
+        canvas.drawLine(MARGIN_YELLOW * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_YELLOW * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                (Constants.BOARD_WIDTH - MARGIN_YELLOW) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_YELLOW * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+
+        // left lines
+        paint.setColor(Color.RED);
+        canvas.drawLine(MARGIN_RED * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_RED * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                MARGIN_RED * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_RED) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+        paint.setColor(Color.YELLOW);
+        canvas.drawLine(MARGIN_YELLOW * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_YELLOW * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                MARGIN_YELLOW * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_YELLOW) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+
+        // bottom lines
+        paint.setColor(Color.RED);
+        canvas.drawLine(MARGIN_RED * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_RED) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                (Constants.BOARD_WIDTH - MARGIN_RED) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_RED) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+        paint.setColor(Color.YELLOW);
+        canvas.drawLine(MARGIN_YELLOW * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_YELLOW) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                (Constants.BOARD_WIDTH - MARGIN_YELLOW) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_YELLOW) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+
+        // right lines
+        paint.setColor(Color.RED);
+        canvas.drawLine((Constants.BOARD_WIDTH - MARGIN_RED) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_RED * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                (Constants.BOARD_WIDTH - MARGIN_RED) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_RED) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
+        paint.setColor(Color.YELLOW);
+        canvas.drawLine((Constants.BOARD_WIDTH - MARGIN_YELLOW) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                MARGIN_YELLOW * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                (Constants.BOARD_WIDTH - MARGIN_YELLOW) * canvas.getWidth() / Constants.BOARD_WIDTH,
+                (Constants.BOARD_HEIGHT - MARGIN_YELLOW) * canvas.getHeight() / Constants.BOARD_HEIGHT,
+                paint);
     }
+
+    /**
+     * Convert an x-coordinate from screen pixels to game board resolution.
+     *
+     * @return The x-coordinate on the game board
+     */
+    private float screenToBoardX(float x) {
+        return x * Constants.BOARD_WIDTH / getWidth();
+    }
+
+    /**
+     * Convert an y-coordinate from screen pixels to game board resolution.
+     *
+     * @return The y-coordinate on the game board
+     */
+    private float screenToBoardY(float y) {
+        return y * Constants.BOARD_HEIGHT / getHeight();
+    }
+
 }

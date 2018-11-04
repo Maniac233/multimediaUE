@@ -71,8 +71,8 @@ public class Hud {
      * @param paint draw utility
      */
     public void draw(Canvas canvas, Paint paint) {
-        float drawLeft = positionX * canvas.getWidth() / Constants.BOARD_WIDTH - sprite.getWidth() / 2.f;
-        float drawTop = positionY * canvas.getHeight() / Constants.BOARD_HEIGHT - sprite.getHeight() / 2.f;
+        float drawLeft = positionX * canvas.getWidth() / Constants.BOARD_WIDTH;
+        float drawTop = positionY * canvas.getHeight() / Constants.BOARD_HEIGHT;
         canvas.drawBitmap(sprite, drawLeft, drawTop, paint);
     }
 }
