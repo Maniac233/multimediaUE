@@ -56,6 +56,8 @@ public class GameLoop implements Runnable {
 
     private LinkedBlockingQueue<QueuedInput> inputs; // pending inputs
 
+    private long levelTime; // level tick counter; will move to the dedicated level class
+
     /**
      * Construct the runnable loop.
      *
@@ -69,6 +71,8 @@ public class GameLoop implements Runnable {
         this.ingameObjects = ingameObjects;
         this.running = false;
         this.inputs = new LinkedBlockingQueue<>();
+
+        this.levelTime = 0;
     }
 
     /**
@@ -99,6 +103,8 @@ public class GameLoop implements Runnable {
     @Override
     public void run() {
         this.running = true;
+
+        this.levelTime = 0;
 
         // Better game loop inspired by http://www.koonsolo.com/news/dewitters-gameloop/
         final int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
@@ -225,6 +231,8 @@ public class GameLoop implements Runnable {
         for(Bullet bullet : ingameObjects.getBullets()) {
             bullet.update();
         }
+
+        updateLevel();
     }
 
     /**
@@ -248,5 +256,27 @@ public class GameLoop implements Runnable {
                 holder.unlockCanvasAndPost(canvas);
             }
         }
+    }
+
+    /**
+     * Run the per-update changes that define a level (i.e. spawn bullets).
+     *
+     * This method will be replaced by a dedicated level class.
+     */
+    private void updateLevel() {
+        final int directions = 6; // how many bullets at once
+        final int spawnInterval = 60; // after how many ticks to spawn the next bullet
+        final int turnInterval = 120; // after how many ticks to spawn in the other rotation
+
+        if(levelTime % spawnInterval == 0) {
+            float clockwise = ((levelTime / turnInterval) % 2) * 2.f - 1.f;
+            for(int i = 0; i < directions; i++) {
+                float heading = (float)(2. * Math.PI / directions * i * clockwise);
+                float turn = .01f * clockwise;
+                ingameObjects.spawnBullet(500.f, 900.f, heading, .6f, turn, .01f);
+            }
+        }
+
+        levelTime++;
     }
 }

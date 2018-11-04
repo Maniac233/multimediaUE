@@ -53,19 +53,19 @@ public class IngameObjects {
     }
 
     /**
-     * Temporary method to put interesting stuff on the screen.
+     * Add a single bullet to the level.
      *
-     * @param x x-coordinate
-     * @param y y-coordinate
+     * @param positionX spawn position x-coordinate
+     * @param positionY spawn position y-coordinate
+     * @param heading initial movement direction
+     * @param speed initial move rate per game update
+     * @param turn per-update absolute change to heading
+     * @param acceleration per-update absolute change to speed
      */
-    public void spawnStuff(float x, float y)
+    public void spawnBullet(float positionX, float positionY, float heading, float speed,
+                            float turn, float acceleration)
     {
-        net = new Net((int)x, (int)y, 200.f, netSprite, 5000);
-
-        for(int i = 0; i < 6; i++) {
-            Bullet bullet = new Bullet(500.f, 900.f, bulletSprite,
-                    (float)(Math.PI / 3. * i), .6f, .01f, .01f);
-            bullets.add(bullet);
-        }
+        Bullet bullet = new Bullet(positionX, positionY, bulletSprite, heading, speed, turn, acceleration);
+        bullets.add(bullet);
     }
 }
