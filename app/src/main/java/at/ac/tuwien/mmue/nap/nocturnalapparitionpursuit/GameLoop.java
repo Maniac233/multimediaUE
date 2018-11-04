@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import at.ac.tuwien.mmue.nap.nocturnalapparitionpursuit.ingame.Bullet;
@@ -227,9 +228,13 @@ public class GameLoop implements Runnable {
 
         ingameObjects.getPlayer().update();
 
-        for(Bullet bullet : ingameObjects.getBullets()) {
+        List<Bullet> bullets = ingameObjects.getBullets();
+        for(Bullet bullet : bullets) {
             bullet.update();
         }
+
+        // clear offscreen bullets
+        bullets.removeIf((Bullet b) -> !b.isInBounds());
 
         updateLevel();
     }

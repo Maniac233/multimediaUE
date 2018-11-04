@@ -16,7 +16,10 @@ public class Bullet {
     private float positionY; // Y coordinate ranging from [0..1778]
     private Bitmap sprite; // source pixel data
     private Rect spriteRect; // draw source area
-    private int state; // current state of the bullet
+
+    public enum State { LIVE, DEAD };
+
+    private State state; // current state of the bullet
 
     // ---- behavior ----
     private float heading; // movement direction [0..2pi]
@@ -41,6 +44,7 @@ public class Bullet {
         this.positionY = positionY;
         this.sprite = sprite;
         this.spriteRect = new Rect(0, 0, sprite.getWidth(), sprite.getHeight());
+        this.state = State.LIVE;
 
         this.heading = heading;
         this.speed = speed;
@@ -48,11 +52,19 @@ public class Bullet {
         this.acceleration = acceleration;
     }
 
-    public int getState() {
+    public float getPositionX() {
+        return positionX;
+    }
+
+    public float getPositionY() {
+        return positionY;
+    }
+
+    public State getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -86,6 +98,20 @@ public class Bullet {
 
     public void setAcceleration(float acceleration) {
         this.acceleration = acceleration;
+    }
+
+    /**
+     * Return <code>true</code> if the bullet is in or just beyond the screen area.
+     *
+     * If the bullet strays outside this area, it will be removed from the game.
+     *
+     * @return whether the bullet is within a margin of the game board
+     */
+    public boolean isInBounds() {
+        final float MARGIN = 100.f;
+
+        return positionX > -MARGIN && positionX < Constants.BOARD_WIDTH + MARGIN &&
+               positionY > -MARGIN && positionY < Constants.BOARD_HEIGHT + MARGIN;
     }
 
     /**
