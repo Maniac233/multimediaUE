@@ -11,8 +11,8 @@ import android.graphics.Paint;
  * circle primitives, effects etc.
  */
 public class Net {
-    private int positionX; // X coordinate
-    private int positionY; // Y coordinate
+    private float positionX; // X coordinate
+    private float positionY; // Y coordinate
     private float size; // Scale of covered area
     private Bitmap sprite; // source pixel data
     private int lifetime; // Leftover time to live
@@ -21,12 +21,20 @@ public class Net {
     /**
      * Place the Net at the given position with the given placeholder image.
      */
-    public Net(int positionX, int positionY, float size, Bitmap sprite, int lifetime) {
+    public Net(float positionX, float positionY, float size, Bitmap sprite, int lifetime) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.size = size;
         this.sprite = sprite;
         this.lifetime = lifetime;
+    }
+
+    public float getPositionX() {
+        return positionX;
+    }
+
+    public float getPositionY() {
+        return positionY;
     }
 
     public float getSize() {

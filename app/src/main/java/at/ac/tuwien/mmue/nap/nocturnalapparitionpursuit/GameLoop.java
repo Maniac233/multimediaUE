@@ -212,6 +212,7 @@ public class GameLoop implements Runnable {
 
                 case JUMP:
                     if(jumpCooldown <= 0) {
+                        ingameObjects.castNet(player.getPositionX(), player.getPositionY());
                         player.jumpTo(input.x, input.y);
                         jumpCooldown = Constants.JUMP_WAIT;
                     }

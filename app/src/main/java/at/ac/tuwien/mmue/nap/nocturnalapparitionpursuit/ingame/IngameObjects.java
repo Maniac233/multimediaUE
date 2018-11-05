@@ -68,4 +68,8 @@ public class IngameObjects {
         Bullet bullet = new Bullet(positionX, positionY, bulletSprite, heading, speed, turn, acceleration);
         bullets.add(bullet);
     }
+
+    public void castNet(float positionX, float positionY) {
+        net = new Net(positionX, positionY, Constants.NET_SIZE, netSprite, Constants.NET_DURATION);
+    }
 }
