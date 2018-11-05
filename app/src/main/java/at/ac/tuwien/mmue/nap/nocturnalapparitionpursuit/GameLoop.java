@@ -229,7 +229,7 @@ public class GameLoop implements Runnable {
         // Update game logic
         Net net = ingameObjects.getNet();
         if(net != null) {
-            net.setLifetime(ingameObjects.getNet().getLifetime() - 1);
+            net.update();
         }
 
         ingameObjects.getPlayer().update();

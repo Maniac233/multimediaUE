@@ -138,13 +138,14 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void drawAll(final Canvas canvas, float interpolation) {
         // Draw the bitmaps:
         background.draw(canvas, paint);
-        ingameObjects.getHud().draw(canvas, paint);
-        ingameObjects.getPlayer().draw(canvas, paint);
         Net net = ingameObjects.getNet();
         if(net != null) {
             net.draw(canvas, paint);
         }
 
+        ingameObjects.getHud().draw(canvas, paint);
+        ingameObjects.getPlayer().draw(canvas, paint);
+        
         for (Bullet bullet : ingameObjects.getBullets()) {
             bullet.draw(canvas, paint);
         }
