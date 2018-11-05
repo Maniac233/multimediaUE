@@ -57,6 +57,7 @@ public class GameLoop implements Runnable {
     private LinkedBlockingQueue<QueuedInput> inputs; // pending inputs
 
     private long levelTime; // level tick counter; will move to the dedicated level class
+    private int jumpCooldown; // remaining time for the player until jump allowed
 
     /**
      * Construct the runnable loop.
@@ -73,6 +74,7 @@ public class GameLoop implements Runnable {
         this.inputs = new LinkedBlockingQueue<>();
 
         this.levelTime = 0;
+        this.jumpCooldown = 0;
     }
 
     /**
@@ -209,7 +211,10 @@ public class GameLoop implements Runnable {
                     break;
 
                 case JUMP:
-                    player.jumpTo(input.x, input.y);
+                    if(jumpCooldown <= 0) {
+                        player.jumpTo(input.x, input.y);
+                        jumpCooldown = Constants.JUMP_WAIT;
+                    }
                     break;
             }
 //            ingameObjects.spawnStuff(input.x, input.y);
@@ -217,7 +222,7 @@ public class GameLoop implements Runnable {
     }
 
     /**
-     * Run one tick of game logic. This entails updating the positions etc. of ingame objects.
+     * Run onehis entails updating the positions etc. of ingame objects.
      */
     private void updateGame() {
         // Update game logic
@@ -235,6 +240,9 @@ public class GameLoop implements Runnable {
 
         // clear offscreen bullets
         bullets.removeIf((Bullet b) -> !b.isInBounds());
+
+        if(jumpCooldown > 0)
+            jumpCooldown--;
 
         updateLevel();
     }
